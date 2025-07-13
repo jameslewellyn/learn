@@ -14,7 +14,7 @@ First, install system dependencies that some tools may require:
 
 ```bash
 sudo apt update
-sudo apt install -y build-essential cmake pkg-config libfontconfig1-dev libfreetype6-dev libxcb-xfixes0-dev libxkbcommon-dev python3
+sudo apt install -y build-essential cmake pkg-config libfontconfig1-dev libfreetype6-dev libxcb-xfixes0-dev libxkbcommon-dev python3 libssl-dev libpcap-dev
 ```
 
 ## Tool Installation and Setup
@@ -375,6 +375,605 @@ style = "bright-black"
 EOF
 ```
 
+### 10. Bat (Modern cat Alternative)
+
+**Installation:**
+```bash
+cargo install bat
+```
+
+**Basic Setup:**
+```bash
+# Add aliases
+echo 'alias cat="bat"' >> ~/.bashrc
+echo 'alias less="bat"' >> ~/.bashrc
+
+# Create configuration directory
+mkdir -p ~/.config/bat
+
+# Create configuration file
+cat > ~/.config/bat/config << 'EOF'
+--theme="OneHalfDark"
+--style="numbers,changes,header"
+--italic-text=always
+--paging=auto
+--wrap=never
+--tabs=2
+EOF
+
+# Set environment variable
+echo 'export BAT_THEME="OneHalfDark"' >> ~/.bashrc
+```
+
+### 11. Delta (Git Diff Viewer)
+
+**Installation:**
+```bash
+cargo install git-delta
+```
+
+**Basic Setup:**
+```bash
+# Configure git to use delta
+git config --global core.pager delta
+git config --global interactive.diffFilter "delta --color-only"
+git config --global delta.navigate true
+git config --global delta.light false
+git config --global delta.side-by-side true
+git config --global merge.conflictstyle diff3
+git config --global diff.colorMoved default
+
+# Create delta configuration
+cat >> ~/.gitconfig << 'EOF'
+[delta]
+    features = decorations
+    whitespace-error-style = 22 reverse
+    
+[delta "decorations"]
+    commit-decoration-style = bold yellow box ul
+    file-style = bold yellow ul
+    file-decoration-style = none
+    hunk-header-decoration-style = yellow box
+EOF
+```
+
+### 12. Zoxide (Smart cd)
+
+**Installation:**
+```bash
+cargo install zoxide
+```
+
+**Basic Setup:**
+```bash
+# Add to shell configuration
+echo 'eval "$(zoxide init bash)"' >> ~/.bashrc
+
+# Add aliases
+echo 'alias cd="z"' >> ~/.bashrc
+echo 'alias cdi="zi"' >> ~/.bashrc  # Interactive mode
+
+# Create configuration directory
+mkdir -p ~/.config/zoxide
+
+# Note: zoxide learns from your usage patterns automatically
+```
+
+### 13. Broot (Interactive Tree Navigation)
+
+**Installation:**
+```bash
+cargo install broot
+```
+
+**Basic Setup:**
+```bash
+# Initialize broot (creates config and shell integration)
+broot --install
+
+# Add alias
+echo 'alias tree="broot"' >> ~/.bashrc
+echo 'alias br="broot"' >> ~/.bashrc
+
+# Configuration is automatically created at ~/.config/broot/conf.hjson
+# You can customize it after first run
+```
+
+### 14. Ouch (Archive Tool)
+
+**Installation:**
+```bash
+cargo install ouch
+```
+
+**Basic Setup:**
+```bash
+# Add convenient aliases
+echo 'alias extract="ouch decompress"' >> ~/.bashrc
+echo 'alias compress="ouch compress"' >> ~/.bashrc
+
+# Example usage functions
+cat >> ~/.bashrc << 'EOF'
+# Quick archive extraction
+function unpack() {
+    if [ -f "$1" ]; then
+        ouch decompress "$1"
+    else
+        echo "File not found: $1"
+    fi
+}
+
+# Quick archive creation
+function pack() {
+    if [ -z "$2" ]; then
+        echo "Usage: pack <source> <archive_name>"
+    else
+        ouch compress "$1" "$2"
+    fi
+}
+EOF
+```
+
+### 15. Bottom (System Monitor)
+
+**Installation:**
+```bash
+cargo install bottom
+```
+
+**Basic Setup:**
+```bash
+# Add aliases
+echo 'alias top="btm"' >> ~/.bashrc
+echo 'alias htop="btm"' >> ~/.bashrc
+
+# Create configuration directory
+mkdir -p ~/.config/bottom
+
+# Create basic configuration
+cat > ~/.config/bottom/bottom.toml << 'EOF'
+[flags]
+dot_marker = false
+temperature_type = "celsius"
+rate = 1000
+left_legend = false
+current_usage = false
+group_processes = false
+case_sensitive = false
+whole_word = false
+regex = false
+basic = false
+default_time_value = 60000
+time_delta = 15000
+hide_time = false
+autohide_time = false
+default_widget_type = "proc"
+default_widget_count = 1
+disable_click = false
+color = "default"
+mem_as_value = false
+tree = false
+show_table_scroll_position = false
+process_command = false
+disable_advanced_kill = false
+network_use_binary_prefix = false
+network_use_bytes = false
+network_use_log = false
+enable_gpu_memory = false
+retain_for_current_network = false
+EOF
+```
+
+### 16. Procs (Modern ps)
+
+**Installation:**
+```bash
+cargo install procs
+```
+
+**Basic Setup:**
+```bash
+# Add alias
+echo 'alias ps="procs"' >> ~/.bashrc
+
+# Create configuration directory
+mkdir -p ~/.config/procs
+
+# Create configuration file
+cat > ~/.config/procs/config.toml << 'EOF'
+[[columns]]
+kind = "Pid"
+style = "BrightYellow"
+numeric_search = true
+nonnumeric_search = false
+
+[[columns]]
+kind = "User"
+style = "BrightGreen"
+numeric_search = false
+nonnumeric_search = true
+
+[[columns]]
+kind = "Separator"
+style = "White"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "Tty"
+style = "BrightWhite"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "UsageCpu"
+style = "BrightMagenta"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "UsageMemory"
+style = "BrightCyan"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "CpuTime"
+style = "White"
+numeric_search = false
+nonnumeric_search = false
+
+[[columns]]
+kind = "Command"
+style = "BrightWhite"
+numeric_search = false
+nonnumeric_search = true
+
+[style]
+header = "BrightWhite"
+EOF
+```
+
+### 17. Hyperfine (Benchmarking Tool)
+
+**Installation:**
+```bash
+cargo install hyperfine
+```
+
+**Basic Setup:**
+```bash
+# Add convenient function for quick benchmarking
+cat >> ~/.bashrc << 'EOF'
+# Quick benchmark function
+function benchmark() {
+    if [ -z "$1" ]; then
+        echo "Usage: benchmark <command>"
+        echo "Example: benchmark 'ls -la'"
+    else
+        hyperfine --warmup 3 --min-runs 5 "$1"
+    fi
+}
+
+# Compare two commands
+function compare() {
+    if [ -z "$2" ]; then
+        echo "Usage: compare <command1> <command2>"
+        echo "Example: compare 'ls -la' 'lsd -la'"
+    else
+        hyperfine --warmup 3 --min-runs 5 "$1" "$2"
+    fi
+}
+EOF
+```
+
+### 18. Tokei (Code Statistics)
+
+**Installation:**
+```bash
+cargo install tokei
+```
+
+**Basic Setup:**
+```bash
+# Add aliases for common usage
+echo 'alias count="tokei"' >> ~/.bashrc
+echo 'alias loc="tokei"' >> ~/.bashrc
+
+# Create configuration directory
+mkdir -p ~/.config/tokei
+
+# Helpful functions
+cat >> ~/.bashrc << 'EOF'
+# Quick code stats for current directory
+function codestats() {
+    echo "Code statistics for $(pwd):"
+    tokei --sort code
+}
+
+# Code stats with specific language
+function langstats() {
+    if [ -z "$1" ]; then
+        echo "Usage: langstats <language>"
+        echo "Example: langstats rust"
+    else
+        tokei --type "$1"
+    fi
+}
+EOF
+```
+
+### 19. Bacon (Background Code Checker)
+
+**Installation:**
+```bash
+cargo install bacon
+```
+
+**Basic Setup:**
+```bash
+# Bacon is primarily used within Rust projects
+# Add convenient aliases
+echo 'alias check="bacon check"' >> ~/.bashrc
+echo 'alias test="bacon test"' >> ~/.bashrc
+echo 'alias clippy="bacon clippy"' >> ~/.bashrc
+
+# Create default configuration (run in Rust project root)
+cat >> ~/.bashrc << 'EOF'
+# Initialize bacon in a Rust project
+function bacon_init() {
+    if [ -f "Cargo.toml" ]; then
+        bacon --init
+        echo "Bacon initialized in $(pwd)"
+    else
+        echo "Not a Rust project (no Cargo.toml found)"
+    fi
+}
+EOF
+```
+
+### 20. Cargo-nextest (Advanced Test Runner)
+
+**Installation:**
+```bash
+cargo install cargo-nextest --locked
+```
+
+**Basic Setup:**
+```bash
+# Add aliases for testing
+echo 'alias test="cargo nextest run"' >> ~/.bashrc
+echo 'alias testall="cargo nextest run --all-features"' >> ~/.bashrc
+
+# Create configuration directory
+mkdir -p ~/.config/nextest
+
+# Create basic configuration
+cat > ~/.config/nextest/config.toml << 'EOF'
+[profile.default]
+retries = 2
+fail-fast = false
+test-threads = "num-cpus"
+
+[profile.ci]
+retries = 0
+fail-fast = true
+test-threads = 1
+
+[profile.default.junit]
+path = "target/nextest/ci/junit.xml"
+EOF
+```
+
+### 21. Zellij (Terminal Multiplexer)
+
+**Installation:**
+```bash
+cargo install zellij
+```
+
+**Basic Setup:**
+```bash
+# Add aliases
+echo 'alias tmux="zellij"' >> ~/.bashrc
+echo 'alias zj="zellij"' >> ~/.bashrc
+
+# Create configuration directory
+mkdir -p ~/.config/zellij
+
+# Create basic configuration
+cat > ~/.config/zellij/config.kdl << 'EOF'
+theme "default"
+default_shell "bash"
+pane_frames false
+mouse_mode true
+scroll_buffer_size 10000
+copy_command "wl-copy"
+copy_clipboard "system"
+copy_on_select false
+scrollback_editor "vim"
+
+keybinds {
+    normal {
+        bind "Alt h" { MoveFocus "Left"; }
+        bind "Alt l" { MoveFocus "Right"; }
+        bind "Alt j" { MoveFocus "Down"; }
+        bind "Alt k" { MoveFocus "Up"; }
+        bind "Alt n" { NewPane; }
+        bind "Alt x" { CloseFocus; }
+        bind "Alt t" { NewTab; }
+        bind "Alt 1" { GoToTab 1; }
+        bind "Alt 2" { GoToTab 2; }
+        bind "Alt 3" { GoToTab 3; }
+        bind "Alt 4" { GoToTab 4; }
+        bind "Alt 5" { GoToTab 5; }
+    }
+}
+EOF
+```
+
+### 22. Jaq (JSON Processor)
+
+**Installation:**
+```bash
+cargo install jaq
+```
+
+**Basic Setup:**
+```bash
+# Add alias as jq alternative
+echo 'alias jq="jaq"' >> ~/.bashrc
+
+# Helpful functions for JSON processing
+cat >> ~/.bashrc << 'EOF'
+# Pretty print JSON
+function jsonpp() {
+    if [ -z "$1" ]; then
+        jaq '.'
+    else
+        jaq '.' "$1"
+    fi
+}
+
+# Extract specific field from JSON
+function jsonget() {
+    if [ -z "$1" ]; then
+        echo "Usage: jsonget <field> [file]"
+        echo "Example: jsonget '.name' data.json"
+        echo "Example: echo '{\"name\":\"test\"}' | jsonget '.name'"
+    else
+        if [ -z "$2" ]; then
+            jaq "$1"
+        else
+            jaq "$1" "$2"
+        fi
+    fi
+}
+EOF
+```
+
+### 23. Watchexec (File Watcher)
+
+**Installation:**
+```bash
+cargo install watchexec-cli
+```
+
+**Basic Setup:**
+```bash
+# Add alias
+echo 'alias watch="watchexec"' >> ~/.bashrc
+
+# Helpful functions
+cat >> ~/.bashrc << 'EOF'
+# Watch and run command on file changes
+function watchrun() {
+    if [ -z "$1" ]; then
+        echo "Usage: watchrun <command>"
+        echo "Example: watchrun 'cargo test'"
+    else
+        watchexec --clear "$1"
+    fi
+}
+
+# Watch specific file types
+function watchext() {
+    if [ -z "$2" ]; then
+        echo "Usage: watchext <extension> <command>"
+        echo "Example: watchext rs 'cargo check'"
+    else
+        watchexec --exts "$1" --clear "$2"
+    fi
+}
+
+# Watch and restart command
+function watchrestart() {
+    if [ -z "$1" ]; then
+        echo "Usage: watchrestart <command>"
+        echo "Example: watchrestart 'cargo run'"
+    else
+        watchexec --restart --clear "$1"
+    fi
+}
+EOF
+```
+
+### 24. Choose (Field Selector)
+
+**Installation:**
+```bash
+cargo install choose
+```
+
+**Basic Setup:**
+```bash
+# Add helpful functions
+cat >> ~/.bashrc << 'EOF'
+# Choose specific fields (alternative to cut/awk)
+function field() {
+    if [ -z "$1" ]; then
+        echo "Usage: field <field_number> [delimiter]"
+        echo "Example: echo 'a,b,c' | field 1"
+        echo "Example: echo 'a:b:c' | field 1 ':'"
+    else
+        if [ -z "$2" ]; then
+            choose "$1"
+        else
+            choose -f "$2" "$1"
+        fi
+    fi
+}
+
+# Choose range of fields
+function fields() {
+    if [ -z "$1" ]; then
+        echo "Usage: fields <start:end> [delimiter]"
+        echo "Example: echo 'a,b,c,d' | fields 1:2"
+    else
+        if [ -z "$2" ]; then
+            choose "$1"
+        else
+            choose -f "$2" "$1"
+        fi
+    fi
+}
+EOF
+```
+
+### 25. Huniq (Unique Lines)
+
+**Installation:**
+```bash
+cargo install huniq
+```
+
+**Basic Setup:**
+```bash
+# Add alias
+echo 'alias uniq="huniq"' >> ~/.bashrc
+
+# Helpful functions
+cat >> ~/.bashrc << 'EOF'
+# Remove duplicate lines (preserving order)
+function unique() {
+    if [ -z "$1" ]; then
+        huniq
+    else
+        huniq < "$1"
+    fi
+}
+
+# Count unique lines
+function uniquecount() {
+    if [ -z "$1" ]; then
+        huniq --count
+    else
+        huniq --count < "$1"
+    fi
+}
+EOF
+```
+
 ## Tool Usage Examples
 
 ### Quick Reference
@@ -410,6 +1009,85 @@ tldr -u                    # Update cache
 # Network monitoring with Bandwhich
 sudo bandwhich             # Monitor network usage
 sudo bandwhich -i wlan0    # Monitor specific interface
+
+# File viewing with Bat
+bat file.txt               # View file with syntax highlighting
+bat -n file.txt            # Show line numbers
+bat -A file.txt            # Show all characters
+
+# Git diffs with Delta
+git diff                   # View diff with Delta
+git log -p                 # View commit history with diffs
+git show                   # Show commit details
+
+# Smart navigation with Zoxide
+z project                  # Jump to project directory
+zi                         # Interactive directory selection
+z -                        # Go to previous directory
+
+# Interactive tree with Broot
+br                         # Launch broot
+broot -h                   # Show hidden files
+broot -s                   # Show sizes
+
+# Archive handling with Ouch
+ouch compress file.txt archive.tar.gz    # Create archive
+ouch decompress archive.tar.gz           # Extract archive
+ouch list archive.tar.gz                 # List archive contents
+
+# System monitoring with Bottom
+btm                        # Launch bottom
+btm -b                     # Basic mode
+btm -t                     # Show tree view
+
+# Process monitoring with Procs
+procs                      # Show all processes
+procs firefox              # Search for firefox processes
+procs --tree               # Show process tree
+
+# Benchmarking with Hyperfine
+hyperfine 'command1' 'command2'          # Compare commands
+hyperfine --warmup 3 'command'           # Warmup runs
+hyperfine --export-json results.json 'cmd' # Export results
+
+# Code statistics with Tokei
+tokei                      # Show code stats
+tokei --sort code          # Sort by lines of code
+tokei --languages          # Show supported languages
+
+# Background checking with Bacon
+bacon check                # Run continuous cargo check
+bacon test                 # Run continuous tests
+bacon clippy               # Run continuous clippy
+
+# Testing with Nextest
+cargo nextest run          # Run tests with nextest
+cargo nextest run --all-features  # Run with all features
+cargo nextest list         # List available tests
+
+# Terminal multiplexing with Zellij
+zellij                     # Launch zellij
+zellij attach session     # Attach to session
+zellij ls                  # List sessions
+
+# JSON processing with Jaq
+echo '{"name": "test"}' | jaq '.name'     # Extract field
+jaq '.[] | .name' data.json               # Process array
+jaq 'keys' data.json                      # Get object keys
+
+# File watching with Watchexec
+watchexec 'cargo test'     # Run tests on file changes
+watchexec -e rs 'cargo check'  # Watch only .rs files
+watchexec --restart 'cargo run'  # Restart on changes
+
+# Field selection with Choose
+echo 'a,b,c' | choose 1    # Select second field
+echo 'a:b:c' | choose -f ':' 1  # Custom delimiter
+echo 'a,b,c,d' | choose 1:2     # Select range
+
+# Unique lines with Huniq
+cat file.txt | huniq       # Remove duplicates
+cat file.txt | huniq --count  # Count unique lines
 ```
 
 ## Additional Configuration Tips
@@ -430,7 +1108,13 @@ cargo install-update -a
 echo "Updating tealdeer cache..."
 tldr --update
 
+echo "Updating broot if configuration changed..."
+broot --install
+
 echo "All tools updated!"
+echo ""
+echo "Installed tools:"
+cargo install --list | grep -E "(alacritty|lsd|ripgrep|fd-find|sd|bandwhich|du-dust|tealdeer|starship|bat|git-delta|zoxide|broot|ouch|bottom|procs|hyperfine|tokei|bacon|cargo-nextest|zellij|jaq|watchexec-cli|choose|huniq)"
 EOF
 
 chmod +x ~/update-rust-tools.sh
@@ -500,6 +1184,22 @@ sd --version
 dust --version
 tldr --version
 starship --version
+bat --version
+delta --version
+zoxide --version
+broot --version
+ouch --version
+btm --version
+procs --version
+hyperfine --version
+tokei --version
+bacon --version
+cargo nextest --version
+zellij --version
+jaq --version
+watchexec --version
+choose --version
+huniq --version
 ```
 
 ## Alternative Installation Methods
@@ -519,6 +1219,21 @@ sudo snap install starship
 ```
 
 The `cargo install` method ensures you get the latest version and all features compiled for your system.
+
+## Quick Install All Tools
+
+If you want to install all the tools at once, you can run:
+
+```bash
+# Install all tools in one command (this will take a while)
+cargo install alacritty lsd ripgrep fd-find sd bandwhich du-dust tealdeer starship bat git-delta zoxide broot ouch bottom procs hyperfine tokei bacon cargo-nextest zellij jaq watchexec-cli choose huniq
+
+# Initialize tools that need setup
+broot --install
+tldr --update
+```
+
+**Note:** This will take significant time to compile all tools. Consider installing them individually or in smaller batches for better control over the process.
 
 ---
 
