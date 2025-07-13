@@ -45,47 +45,225 @@ EOF
 echo 'export RIPGREP_CONFIG_PATH="$HOME/.ripgreprc"' >> ~/.bashrc
 ```
 
-## Usage Examples
+## Basic Usage
+
+### Essential Commands
 
 ```bash
-# Basic search
-rg "pattern" .
+# Search for text in current directory
+rg "search_term"
 
-# Case insensitive search
-rg -i "pattern" .
+# Search with case insensitive
+rg -i "search_term"
 
-# Search only Python files
-rg -t py "pattern" .
+# Search in specific file types
+rg -t py "search_term"           # Python files only
+rg -t rust "search_term"         # Rust files only
+rg -t js "search_term"           # JavaScript files only
 
 # Search with line numbers
-rg -n "pattern" .
-
-# Search with context lines
-rg -A 3 -B 3 "pattern" .
+rg -n "search_term"
 
 # Search for whole words only
-rg -w "pattern" .
+rg -w "search_term"
+
+# Search and show context (3 lines before/after)
+rg -C 3 "search_term"
+```
+
+### Common Patterns
+
+```bash
+# Find function definitions
+rg "fn \w+"                      # Rust functions
+rg "def \w+"                     # Python functions
+rg "function \w+"                # JavaScript functions
+
+# Find imports/includes
+rg "^import"                     # Python imports
+rg "^use "                       # Rust use statements
+rg "#include"                    # C/C++ includes
+
+# Find TODO/FIXME comments
+rg -i "todo|fixme"
+
+# Search for email addresses
+rg "\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b"
+
+# Search for IP addresses
+rg "\b\d{1,3}\.\d{1,3}\.\d{1,3}\.\d{1,3}\b"
+```
+
+## Advanced Usage
+
+### Complex Search Patterns
+
+```bash
+# Multiline search
+rg -U "start.*\n.*end"
+
+# Search with regex
+rg "fn\s+\w+\s*\([^)]*\)"       # Function signatures
 
 # Search and replace (preview)
 rg "old_pattern" -r "new_pattern" --passthru
 
-# Search with file types
-rg -t rust "fn main"
+# Search excluding patterns
+rg "pattern" --glob='!target/*' --glob='!node_modules/*'
 
-# Search excluding certain directories
-rg "pattern" --glob='!target/*'
+# Search with multiple file types
+rg -t rust -t python "search_term"
 
-# Search for multiple patterns
-rg "pattern1|pattern2" .
+# Search hidden files
+rg -H "pattern"
 
-# Search for exact string (not regex)
-rg -F "exact string" .
+# Search binary files
+rg -a "pattern"
 
-# Search in specific files
-rg "pattern" -g "*.rs"
+# Search with fixed strings (no regex)
+rg -F "exact string with special chars []{}()"
+```
+
+### Advanced Context and Output
+
+```bash
+# Different context options
+rg -A 5 "pattern"                # 5 lines after
+rg -B 5 "pattern"                # 5 lines before
+rg -C 5 "pattern"                # 5 lines before and after
+
+# Only show filenames
+rg -l "pattern"
+
+# Count matches
+rg -c "pattern"
+
+# Show only matches (no line content)
+rg -o "pattern"
+
+# Invert match (show non-matching lines)
+rg -v "pattern"
+
+# Search with null byte separator (for piping)
+rg -0 "pattern"
+```
+
+### File and Directory Control
+
+```bash
+# Search specific files
+rg "pattern" -g "*.{rs,toml}"
+rg "pattern" -g "Cargo.*"
+
+# Search with depth limit
+rg "pattern" --max-depth 3
+
+# Follow symlinks
+rg "pattern" -L
+
+# Custom file types
+rg --type-add 'mytype:*.{foo,bar}' -t mytype "pattern"
+
+# Search compressed files
+rg "pattern" -z
+
+# Search with size limits
+rg "pattern" --max-filesize 1M
+```
+
+### Output Formatting
+
+```bash
+# JSON output
+rg "pattern" --json
+
+# No heading (filename)
+rg "pattern" --no-heading
+
+# No line numbers
+rg "pattern" --no-line-number
+
+# Replace output format
+rg "pattern" --replace "replacement"
+
+# Color options
+rg "pattern" --color=always
+rg "pattern" --color=never
+rg "pattern" --color=auto
+
+# Custom colors
+rg "pattern" --colors 'match:fg:red' --colors 'match:bg:yellow'
+```
+
+### Integration with Other Tools
+
+```bash
+# Pipe to other tools
+rg "pattern" | sort
+rg "pattern" | uniq -c
+rg "pattern" -l | xargs wc -l
+
+# Use with find
+find . -name "*.rs" | xargs rg "pattern"
+
+# Use with git
+git ls-files | rg "pattern"
+
+# Use with parallel processing
+rg "pattern" --threads 8
+
+# Search git history
+git log -p | rg "pattern"
+
+# Search in archives
+unzip -p archive.zip | rg "pattern"
+```
+
+### Performance Optimization
+
+```bash
+# Memory map files (faster for large files)
+rg "pattern" --mmap
+
+# Use single thread for better memory usage
+rg "pattern" --threads 1
+
+# Disable all smart filtering
+rg "pattern" -u
+
+# Disable gitignore and hidden file filtering
+rg "pattern" -uu
+
+# Search specific file types only
+rg "pattern" -t rust -t python
+
+# Use pre-filter for better performance
+rg "pattern" --pre /path/to/preprocessor
 
 # Search with statistics
 rg "pattern" --stats
+```
+
+### Complex Use Cases
+
+```bash
+# Search for security patterns
+rg -i "password|secret|key|token" --type-add 'config:*.{json,yaml,yml,toml,ini}' -t config
+
+# Find large functions (more than 50 lines)
+rg -A 50 "^fn " | rg -B 50 "^}"
+
+# Search for patterns across multiple repositories
+find ~/projects -name ".git" -type d | sed 's/\/.git$//' | xargs -I {} rg "pattern" {}
+
+# Find files with specific import patterns
+rg "^use std::" -t rust -l | xargs -I {} rg "fn main" {}
+
+# Search with conditional logic
+rg "if.*{" -A 10 | rg "error|panic"
+
+# Find configuration mismatches
+rg "port.*=.*\d+" --type-add 'config:*.{conf,cfg,ini}' -t config
 ```
 
 ## Key Features

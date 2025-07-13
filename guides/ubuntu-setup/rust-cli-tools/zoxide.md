@@ -39,34 +39,274 @@ echo 'zoxide init fish | source' >> ~/.config/fish/config.fish
 echo 'Invoke-Expression (& { (zoxide init powershell | Out-String) })' >> $PROFILE
 ```
 
-## Usage Examples
+## Basic Usage
+
+### Essential Navigation
 
 ```bash
-# Navigate to frequently visited directories
-z documents
-z proj
-z dev
+# Jump to a directory (fuzzy matching)
+z documents                      # Jump to any directory containing "documents"
+z proj                          # Jump to project directory
+z down                          # Jump to Downloads directory
 
-# Interactive directory selection
-zi
+# Interactive directory picker
+zi                              # Shows list of directories to choose from
 
 # Jump to previous directory
-z -
+z -                             # Like cd -
 
-# Add directory to zoxide database
-z /path/to/directory
+# Jump with partial matches
+z doc                           # Matches Documents, docs, documentation, etc.
+z dev                           # Matches Development, dev-tools, etc.
+```
+
+### Common Patterns
+
+```bash
+# Jump to nested directories
+z rust proj                     # Matches rust-projects, my-rust-project, etc.
+z config nvim                   # Matches .config/nvim
+
+# Jump by directory type
+z home                          # Jump to home directory variations
+z tmp                           # Jump to temporary directories
+z log                           # Jump to log directories
+
+# Quick shortcuts
+z ..                            # Go up one level (if configured)
+z ~                             # Go to home directory
+```
+
+## Advanced Usage
+
+### Database Management
+
+```bash
+# View all tracked directories
+zoxide query --list
+
+# View directories with scores
+zoxide query --score
+
+# Query specific pattern
+zoxide query documents
+zoxide query --all documents    # Show all matches
 
 # Remove directory from database
 zoxide remove /path/to/directory
 
-# Query database
-zoxide query documents
-zoxide query --list
-zoxide query --score
+# Add directory manually
+zoxide add /path/to/directory
 
 # Import from other tools
 zoxide import --from autojump ~/.local/share/autojump/autojump.txt
 zoxide import --from z ~/.z
+zoxide import --from autojump --merge  # Merge with existing data
+```
+
+### Advanced Navigation
+
+```bash
+# Navigate with specific ranking
+z documents 2                   # Go to 2nd ranked "documents" directory
+
+# Use with subdirectories
+z proj/rust                     # Navigate to rust subdirectory in project dir
+
+# Case sensitive matching
+z Documents                     # Exact case matching when mixed case
+
+# Navigate to parent directories
+z proj && cd ..                 # Navigate then go up
+
+# Chain navigation
+z proj && cd src && ls          # Navigate and execute commands
+```
+
+### Interactive Mode Features
+
+```bash
+# Launch interactive mode with initial query
+zi rust                         # Start interactive mode filtered by "rust"
+
+# Interactive mode keyboard shortcuts:
+# - Up/Down: Navigate list
+# - Enter: Select directory
+# - Ctrl+C: Cancel
+# - Tab: Complete current selection
+# - /: Filter current list
+# - Escape: Clear filter
+```
+
+### Configuration and Customization
+
+```bash
+# Set custom data directory
+export _ZO_DATA_DIR="$HOME/.local/share/zoxide"
+
+# Echo directory when jumping
+export _ZO_ECHO=1
+
+# Exclude directories from tracking
+export _ZO_EXCLUDE_DIRS="$HOME/.git/*:$HOME/.cache/*:$HOME/tmp/*"
+
+# Maximum age for entries (in seconds)
+export _ZO_MAXAGE=10000
+
+# Resolve symlinks before adding to database
+export _ZO_RESOLVE_SYMLINKS=1
+
+# Custom FZF options for interactive mode
+export _ZO_FZF_OPTS="--height=40% --layout=reverse --border --preview='ls -la {}'"
+```
+
+### Integration with Shell Features
+
+```bash
+# Shell functions for enhanced usage
+function zl() {
+    z "$1" && ls -la
+}
+
+function zg() {
+    z "$1" && git status
+}
+
+function zf() {
+    z "$1" && fd . | head -20
+}
+
+function zr() {
+    z "$1" && rg --files | head -20
+}
+
+# Project-specific navigation
+function project() {
+    z ~/Projects/"$1"
+}
+
+function repo() {
+    z ~/git/"$1"
+}
+
+# Work-specific shortcuts
+function work() {
+    z ~/Work/"$1"
+}
+
+function docs() {
+    z ~/Documents/"$1"
+}
+```
+
+### Advanced Querying
+
+```bash
+# List directories by frequency
+zoxide query --list | sort -n
+
+# Find directories containing specific terms
+zoxide query --list | grep -i rust
+zoxide query --list | grep -E "(project|dev)"
+
+# Show statistics
+zoxide query --stats
+
+# Export database
+zoxide query --list > zoxide_backup.txt
+
+# Clean up old entries
+zoxide remove --age 30d          # Remove entries older than 30 days
+```
+
+### Batch Operations
+
+```bash
+# Add multiple directories
+for dir in ~/Projects/*/; do
+    zoxide add "$dir"
+done
+
+# Remove multiple directories
+zoxide query --list | grep tmp | while read dir; do
+    zoxide remove "$dir"
+done
+
+# Backup and restore
+zoxide query --list > ~/.zoxide_backup
+# Restore: while read dir; do zoxide add "$dir"; done < ~/.zoxide_backup
+```
+
+### Integration with Other Tools
+
+```bash
+# Use with find
+find ~/Projects -maxdepth 2 -type d | while read dir; do zoxide add "$dir"; done
+
+# Use with fd
+fd -t d . ~/Projects | head -20 | while read dir; do zoxide add "$dir"; done
+
+# Use with git
+git clone https://github.com/user/repo.git && z repo
+
+# Use with tmux
+alias t='tmux new-session -c "$(zoxide query --list | fzf)"'
+
+# Use with code editors
+alias c='code "$(zoxide query --list | fzf)"'
+alias v='vim "$(zoxide query --list | fzf)"'
+```
+
+### Performance Optimization
+
+```bash
+# Limit database size
+export _ZO_MAXAGE=5000           # Keep only recent entries
+
+# Faster interactive mode
+export _ZO_FZF_OPTS="--no-preview"  # Disable preview for speed
+
+# Exclude heavy directories
+export _ZO_EXCLUDE_DIRS="$HOME/node_modules/*:$HOME/.cargo/*"
+```
+
+### Troubleshooting and Maintenance
+
+```bash
+# Debug mode
+zoxide query --list              # Check what's in database
+zoxide query documents           # Test specific queries
+
+# Reset database
+rm ~/.local/share/zoxide/db.zo   # Remove database file
+
+# Verify configuration
+echo $_ZO_DATA_DIR
+echo $_ZO_ECHO
+echo $_ZO_EXCLUDE_DIRS
+
+# Check shell integration
+type z                           # Should show function definition
+type zi                          # Should show function definition
+```
+
+### Use Case Examples
+
+```bash
+# Development workflow
+z frontend && npm start          # Navigate to frontend and start dev server
+z backend && cargo run           # Navigate to backend and run Rust server
+z docs && mdbook serve           # Navigate to docs and serve
+
+# Daily tasks
+z down                          # Go to Downloads
+z desk                          # Go to Desktop  
+z conf                          # Go to config directory
+
+# Project management
+z proj/website                  # Navigate to website project
+z proj/api                      # Navigate to API project
+z proj/mobile                   # Navigate to mobile project
 ```
 
 ## Key Features
