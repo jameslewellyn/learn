@@ -85,6 +85,7 @@ echo "Installing all essential system packages and tools..."
 # Only install packages that are not already installed
 essential_pkgs=(
     build-essential
+    clang
     containerd.io
     dbus-user-session
     docker-buildx-plugin
@@ -94,6 +95,7 @@ essential_pkgs=(
     fontconfig
     fuse-overlayfs
     git
+    libc-dev
     libfontconfig1-dev
     libfreetype-dev
     libpcap-dev
@@ -148,42 +150,47 @@ echo "Git, mise, and Docker PPAs added and installed successfully!"
 # Install tools via mise (from common.txt)
 echo "Installing tools via mise..."
 eval "$(mise activate bash)"
-mise use -g \
-    age \
-    bat \
-    bottom \
-    cargo:alacritty \
-    cargo:bacon \
-    cargo:bandwhich \
-    cargo:broot \
-    cargo:cargo-nextest \
-    cargo:huniq \
-    cargo:jaq \
-    cargo:mcfly \
-    cargo:skim \
-    cargo:tealdeer \
-    cargo:xsv \
-    choose \
-    cmake \
-    delta \
-    duf \
-    dust \
-    fd \
-    fzf \
-    hyperfine \
-    just \
-    lsd \
-    podman \
-    rclone \
-    ripgrep \
-    sd \
-    starship \
-    tokei \
-    watchexec \
-    zellij \
-    zoxide
-#    cargo:procs \
-#    cargo:ouch \
+mise_tools=(
+    age                  # simple, modern encryption tool
+    bat                  # cat clone with syntax highlighting
+    bat-extras           # extra tools for bat (e.g. batdiff, batgrep)
+    bottom               # graphical process/system monitor
+    cargo:alacritty      # GPU-accelerated terminal emulator
+    cargo:bacon          # Rust code watcher/auto-tester
+    cargo:bandwhich      # display current network utilization by process
+    cargo:broot          # interactive directory/file navigator
+    cargo:cargo-nextest  # next-generation Rust test runner
+    cargo:huniq          # fast, parallel uniq for huge files
+    cargo:jaq            # jq clone in Rust (JSON processor)
+    cargo:mcfly          # smarter shell history search
+    cargo:procs          # modern replacement for ps
+    cargo:ouch           # compression/decompression tool
+    cargo:skim           # fuzzy finder in Rust
+    cargo:tealdeer       # fast tldr client (simplified man pages)
+    cargo:xsv            # fast CSV toolkit
+    choose               # cut/awk alternative for column extraction
+    cmake                # cross-platform build system
+    delta                # syntax-highlighting pager for git/diff output
+    duf                  # disk usage/free utility
+    dust                 # du alternative with better visualization
+    fd                   # simple, fast alternative to find
+    fzf                  # general-purpose command-line fuzzy finder
+    hyperfine            # command-line benchmarking tool
+    just                 # handy command runner (like make, but simpler)
+    lsd                  # modern ls with icons and colors
+    podman               # daemonless container engine
+    python               # Python programming language
+    rclone               # sync files to/from cloud storage
+    ripgrep              # fast recursive search (grep alternative)
+    sd                   # intuitive find & replace CLI
+    starship             # minimal, fast shell prompt
+    tokei                # count lines of code, per language
+    watchexec            # run commands in response to file changes
+    zellij               # terminal workspace and multiplexer
+    zoxide               # smarter cd command, directory jumper
+)
+mise use -g "${mise_tools[@]}"
+
 if ! grep -Fxq 'eval "$(mise activate bash)"' ~/.bashrc; then
     echo 'eval "$(mise activate bash)"' >> ~/.bashrc
 fi
@@ -247,3 +254,7 @@ else
 fi
 
 echo "Completed subuid/subgid configuration for rootless Podman."
+
+echo
+
+echo "Setup completed successfully!"
