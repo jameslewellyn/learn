@@ -49,9 +49,23 @@ echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] http
 sudo apt-get update
 sudo apt-get install -y mise
 
-# Add Docker repository (simplified)
-curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
-sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+# Add Docker repository (modern approach)
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+sudo chmod a+r /etc/apt/keyrings/docker.gpg
+echo "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable" | sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+sudo apt-get update
+# Install Docker
+echo "Installing Docker..."
+# Install Docker packages
+sudo apt-get install -y \
+    containerd.io \
+    docker-buildx-plugin \
+    docker-ce \
+    docker-ce-cli \
+    docker-compose-plugin \
+    uidmap \
+    dbus-user-session \
+    fuse-overlayfs
 
 echo "Git, mise, and Docker PPAs added and installed successfully!"
 
@@ -98,29 +112,51 @@ cargo install \
     xsv
 echo "All cargo tools installed successfully!"
 
-# Install Docker
-echo "Installing Docker..."
-# Install Docker packages
-sudo apt-get install -y \
-    containerd.io \
-    docker-buildx-plugin \
-    docker-ce \
-    docker-ce-cli \
-    docker-compose-plugin
-# Configure standard Docker
-echo "Configuring standard Docker..."
-# Create docker group if it doesn't exist
-sudo groupadd -f docker
-# Add user to docker group
-sudo usermod -aG docker "$USER"
-# Configure rootless Docker
+# Configure Docker (only if not already configured)
+echo "Configuring Docker..."
+
+# Check if docker group exists and user is already in it
+if ! getent group docker > /dev/null 2>&1; then
+    echo "Creating docker group..."
+    sudo groupadd docker
+else
+    echo "Docker group already exists"
+fi
+
+# Check if user is already in docker group
+if ! groups "$USER" | grep -q docker; then
+    echo "Adding user to docker group..."
+    sudo usermod -aG docker "$USER"
+else
+    echo "User already in docker group"
+fi
+
+# Configure rootless Docker (only if not already configured)
 echo "Configuring rootless Docker..."
-# Install required packages for rootless Docker
-sudo apt-get install -y uidmap dbus-user-session fuse-overlayfs
-# Configure subuid and subgid for the user
-sudo usermod --add-subuids 100000-165535 "$USER"
-sudo usermod --add-subgids 100000-165535 "$USER"
-# Enable and start Docker service
-sudo systemctl enable docker
-sudo systemctl start docker
-echo "Docker (standard and rootless) configured successfully!"
+
+# Check if subuid/subgid are already configured
+if ! grep -q "$USER:100000:65536" /etc/subuid 2>/dev/null; then
+    echo "Configuring subuid and subgid for user..."
+    sudo usermod --add-subuids 100000-165535 "$USER"
+    sudo usermod --add-subgids 100000-165535 "$USER"
+else
+    echo "Subuid/subgid already configured for user"
+fi
+
+# Enable and start Docker service (only if not already enabled)
+if ! systemctl is-enabled docker > /dev/null 2>&1; then
+    echo "Enabling Docker service..."
+    sudo systemctl enable docker
+else
+    echo "Docker service already enabled"
+fi
+
+# Start Docker service (only if not already running)
+if ! systemctl is-active docker > /dev/null 2>&1; then
+    echo "Starting Docker service..."
+    sudo systemctl start docker
+else
+    echo "Docker service already running"
+fi
+
+echo "Docker configuration completed!"
