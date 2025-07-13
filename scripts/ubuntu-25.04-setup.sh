@@ -175,6 +175,8 @@ mise_tools=(
     dust                 # du alternative with better visualization
     fd                   # simple, fast alternative to find
     fzf                  # general-purpose command-line fuzzy finder
+    gping                # ping alternative in Rust
+    hexyl                # hex viewer in Rust
     hyperfine            # command-line benchmarking tool
     just                 # handy command runner (like make, but simpler)
     lsd                  # modern ls with icons and colors
