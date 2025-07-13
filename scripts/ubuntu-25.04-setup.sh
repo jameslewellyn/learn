@@ -48,6 +48,7 @@ curl -fsSL https://mise.jdx.dev/gpg-key.pub | gpg --dearmor | sudo tee /etc/apt/
 echo "deb [signed-by=/etc/apt/keyrings/mise-archive-keyring.gpg arch=amd64] https://mise.jdx.dev/deb stable main" | sudo tee /etc/apt/sources.list.d/mise.list
 sudo apt-get update
 sudo apt-get install -y mise
+echo 'eval "$(~/.local/bin/mise activate bash)"' >> ~/.bashrc
 
 # Add Docker repository (modern approach)
 curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor | sudo tee /etc/apt/keyrings/docker.gpg 1> /dev/null
@@ -68,10 +69,28 @@ echo "Git, mise, and Docker PPAs added and installed successfully!"
 
 # Install tools via mise (from common.txt)
 echo "Installing tools via mise..."
+mise update
+mise install \
+    cargo
+# Activate mise so that cargo is available
+mise activate
 mise install \
     age \
     bat \
     bottom \
+    cargo:alacritty \
+    cargo:bacon \
+    cargo:bandwhich \
+    cargo:broot \
+    cargo:cargo-nextest \
+    cargo:huniq \
+    cargo:jaq \
+    cargo:mcfly \
+    cargo:ouch \
+    cargo:procs \
+    cargo:skim \
+    cargo:tealdeer \
+    cargo:xsv \
     choose \
     delta \
     duf \
