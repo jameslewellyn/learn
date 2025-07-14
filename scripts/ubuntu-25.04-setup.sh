@@ -184,6 +184,7 @@ mise_tools=(
     python               # Python programming language
     rclone               # sync files to/from cloud storage
     ripgrep              # fast recursive search (grep alternative)
+    ripgrep-all          # ripgrep with support for PDFs, EPUB, and more
     sd                   # intuitive find & replace CLI
     starship             # minimal, fast shell prompt
     tokei                # count lines of code, per language
