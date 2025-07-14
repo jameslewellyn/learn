@@ -160,6 +160,7 @@ mise_tools=(
     cargo:bandwhich      # display current network utilization by process
     cargo:broot          # interactive directory/file navigator
     cargo:cargo-nextest  # next-generation Rust test runner
+    cargo:gping          # ping alternative in Rust
     cargo:huniq          # fast, parallel uniq for huge files
     cargo:jaq            # jq clone in Rust (JSON processor)
     cargo:mcfly          # smarter shell history search
@@ -175,7 +176,7 @@ mise_tools=(
     dust                 # du alternative with better visualization
     fd                   # simple, fast alternative to find
     fzf                  # general-purpose command-line fuzzy finder
-    gping                # ping alternative in Rust
+    grex                 # regex generator in Rust
     hexyl                # hex viewer in Rust
     hyperfine            # command-line benchmarking tool
     just                 # handy command runner (like make, but simpler)
