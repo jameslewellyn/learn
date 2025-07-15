@@ -196,11 +196,6 @@ add_to_bashrc_if_missing 'eval "$(mise activate bash)"' "mise activation"
 add_to_bashrc_if_missing 'eval "$(starship init bash)"' "starship initialization"
 starship preset nerd-font-symbols -o ~/.config/starship.toml
 
-# Directory navigation (zoxide)
-add_to_bashrc_if_missing 'eval "$(zoxide init bash)"' "zoxide initialization"
-add_to_bashrc_if_missing "alias cd=\"z\"" "zoxide cd alias"
-add_to_bashrc_if_missing "alias cdi=\"zi\"" "zoxide interactive alias"
-
 # Create configuration directory for zoxide
 mkdir -p ~/.config/zoxide
 
@@ -218,6 +213,11 @@ add_to_bashrc_if_missing "alias zr=\"zellij kill-all-sessions; zellij delete-all
 # Git client
 add_to_bashrc_if_missing "alias lg=\"lazygit\"" "lazygit alias"
 add_to_bashrc_if_missing 'eval "$(mcfly init bash)"' "mcfly initialization"
+
+# Directory navigation (zoxide)
+add_to_bashrc_if_missing 'eval "$(zoxide init bash)"' "zoxide initialization"
+add_to_bashrc_if_missing "alias cd=\"z\"" "zoxide cd alias"
+add_to_bashrc_if_missing "alias cdi=\"zi\"" "zoxide interactive alias"
 
 echo "All mise tools installed successfully!"
 
