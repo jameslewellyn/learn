@@ -217,4 +217,69 @@ install_nerdfont() {
         rm -rf "$temp_dir"
         return 1
     fi
+}
+
+# Function to check if a desktop file is installed
+is_desktop_file_installed() {
+    local desktop_name="$1"
+    local desktop_file="$2"
+    
+    # Check if desktop file exists in standard locations
+    if [ -f "/usr/share/applications/$desktop_file" ] || \
+       [ -f "/usr/local/share/applications/$desktop_file" ] || \
+       [ -f "$HOME/.local/share/applications/$desktop_file" ]; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+# Function to install desktop file
+install_desktop_file() {
+    local desktop_file="$1"
+    local source_path="$2"
+    local description="$3"
+    local icon_file="$4"
+    local icon_source_path="$5"
+    
+    if is_desktop_file_installed "$desktop_file" "$desktop_file"; then
+        echo "$description is already installed, skipping."
+        return 0
+    fi
+    
+    echo "Installing $description..."
+    
+    # Create applications directory for user
+    mkdir -p ~/.local/share/applications
+    
+    # Create icons directory for user if icon is provided
+    if [ -n "$icon_file" ] && [ -n "$icon_source_path" ]; then
+        mkdir -p ~/.local/share/icons/hicolor/256x256/apps
+        cp "$icon_source_path" ~/.local/share/icons/hicolor/256x256/apps/"$icon_file" 2>/dev/null || true
+    fi
+    
+    # Copy desktop file
+    if cp "$source_path" ~/.local/share/applications/; then
+        # Update desktop database
+        update-desktop-database ~/.local/share/applications > /dev/null 2>&1 || true
+
+        # Ensure Ubuntu knows about the new desktop file
+        if command -v gtk-update-icon-cache >/dev/null 2>&1; then
+            gtk-update-icon-cache ~/.local/share/icons/hicolor > /dev/null 2>&1 || true
+        fi
+        if command -v update-desktop-database >/dev/null 2>&1; then
+            update-desktop-database ~/.local/share/applications > /dev/null 2>&1 || true
+        fi
+        if command -v xdg-desktop-menu >/dev/null 2>&1; then
+            xdg-desktop-menu forceupdate > /dev/null 2>&1 || true
+        fi
+        if command -v xdg-mime >/dev/null 2>&1; then
+            xdg-mime default "$desktop_file" x-scheme-handler/terminal > /dev/null 2>&1 || true
+        fi
+
+        echo "$description installation completed!"
+    else
+        echo "Failed to install $description"
+        return 1
+    fi
 } 

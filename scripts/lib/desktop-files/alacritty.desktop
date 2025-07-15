@@ -1,0 +1,12 @@
+[Desktop Entry]
+Version=1.0
+Type=Application
+Name=Alacritty
+GenericName=Terminal Emulator
+Comment=A fast, cross-platform, OpenGL terminal emulator
+Exec=alacritty
+Icon=alacritty
+Terminal=false
+Categories=System;TerminalEmulator;
+StartupWMClass=Alacritty
+Keywords=terminal;shell;command;commandline;cmd; 

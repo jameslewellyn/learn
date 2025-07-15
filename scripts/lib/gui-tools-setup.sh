@@ -43,6 +43,15 @@ configure_gui_tools() {
     # Create configuration directories
     mkdir -p ~/.config/alacritty
     
+    # Install Alacritty desktop file
+    SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+    install_desktop_file \
+        "alacritty.desktop" \
+        "$SCRIPT_DIR/desktop-files/alacritty.desktop" \
+        "Alacritty desktop file" \
+        "alacritty.png" \
+        "$SCRIPT_DIR/desktop-files/alacritty.png"
+    
     echo "GUI tools configuration completed!"
 }
 
