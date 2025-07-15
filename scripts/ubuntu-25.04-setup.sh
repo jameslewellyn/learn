@@ -53,12 +53,12 @@ source "$SCRIPT_DIR/lib/helpers.sh"
 # Source container setup functions if container setup is requested
 if [ "$SETUP_CONTAINERS" = true ]; then
     source "$SCRIPT_DIR/lib/container-setup.sh"
-fi
+    fi
 
 # Source GUI tools setup functions if GUI tools setup is requested
 if [ "$SETUP_GUI_TOOLS" = true ]; then
     source "$SCRIPT_DIR/lib/gui-tools-setup.sh"
-fi
+    fi
 
 # =============================================================================
 # MAIN SCRIPT
@@ -129,7 +129,14 @@ install_packages_if_missing essential_pkgs "essential system packages and tools"
 configure_git_setting "user.name" "Enter your Git username"
 configure_git_setting "user.email" "Enter your Git email"
 
-# Step 7: Install rust and associated programs
+# Step 7: Install NerdFont for better CLI tool experience
+echo "Installing Hack Nerd Font for enhanced CLI tool experience..."
+install_nerdfont \
+    "Hack" \
+    "https://github.com/ryanoasis/nerd-fonts/releases/latest/download/Hack.zip" \
+    "Hack Nerd Font"
+
+# Step 8: Install rust and associated programs
 rustup install stable
 
 echo "Git, mise, and Docker PPAs added and installed successfully!"

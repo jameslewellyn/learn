@@ -166,4 +166,55 @@ configure_git_setting() {
     else
         echo "Git global $setting is already set to '$current_value'"
     fi
+}
+
+# =============================================================================
+# FONT MANAGEMENT FUNCTIONS
+# =============================================================================
+
+# Function to check if a font is installed
+is_font_installed() {
+    local font_name="$1"
+    fc-list | grep -i "$font_name" > /dev/null 2>&1
+}
+
+# Function to install NerdFont
+install_nerdfont() {
+    local font_name="$1"
+    local font_url="$2"
+    local description="$3"
+    
+    if is_font_installed "$font_name"; then
+        echo "$description is already installed, skipping."
+        return 0
+    fi
+    
+    echo "Installing $description..."
+    
+    # Create temporary directory
+    local temp_dir=$(mktemp -d)
+    cd "$temp_dir"
+    
+    # Download and install font
+    if curl -L "$font_url" -o font.zip && unzip -q font.zip; then
+        # Create font directory for user
+        mkdir -p ~/.local/share/fonts
+        
+        # Copy TTF files
+        cp *.ttf ~/.local/share/fonts/ 2>/dev/null || true
+        
+        # Update font cache
+        fc-cache -fv > /dev/null 2>&1
+        
+        # Clean up
+        cd ~
+        rm -rf "$temp_dir"
+        
+        echo "$description installation completed!"
+    else
+        echo "Failed to install $description"
+        cd ~
+        rm -rf "$temp_dir"
+        return 1
+    fi
 } 
