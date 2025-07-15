@@ -7,15 +7,7 @@
 # PACKAGE MANAGEMENT FUNCTIONS
 # =============================================================================
 
-# Function to update package lists only if needed
-update_package_lists() {
-    echo "Updating package lists..."
-    if ! apt list --upgradeable 2>/dev/null | grep -q -v "Listing..."; then
-        echo "No package updates available, skipping apt-get update."
-    else
-        sudo apt-get update
-    fi
-}
+
 
 # Function to install packages only if not already installed
 install_packages_if_missing() {

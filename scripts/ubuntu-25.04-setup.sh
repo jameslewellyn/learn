@@ -65,7 +65,7 @@ if [ "$SETUP_GUI_TOOLS" = true ]; then
 # =============================================================================
 
 # Update package lists
-update_package_lists
+sudo apt-get update
 
 # Step 1: Install minimal system packages required for adding PPAs and repositories
 minimal_pkgs=(
@@ -96,7 +96,7 @@ add_modern_repository_if_missing \
 
 
 # Step 5: Update package lists after adding all PPAs
-update_package_lists
+sudo apt-get update
 
 # Step 6: Install all remaining essential packages
 essential_pkgs=(

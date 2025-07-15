@@ -29,7 +29,7 @@ install_docker_components() {
     
     # Update package lists after adding repository
     echo "Updating package lists..."
-    update_package_lists
+    sudo apt-get update
     
     # Install Docker packages
     docker_pkgs=(
