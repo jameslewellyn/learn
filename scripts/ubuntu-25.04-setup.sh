@@ -194,6 +194,7 @@ add_to_bashrc_if_missing 'eval "$(mise activate bash)"' "mise activation"
 
 # Prompt and shell enhancements
 add_to_bashrc_if_missing 'eval "$(starship init bash)"' "starship initialization"
+starship preset nerd-font-symbols -o ~/.config/starship.toml
 
 # Directory navigation (zoxide)
 add_to_bashrc_if_missing 'eval "$(zoxide init bash)"' "zoxide initialization"
