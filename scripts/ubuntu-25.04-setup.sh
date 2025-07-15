@@ -217,6 +217,7 @@ add_to_bashrc_if_missing "alias zr=\"zellij kill-all-sessions && zellij delete-a
 
 # Git client
 add_to_bashrc_if_missing "alias lg=\"lazygit\"" "lazygit alias"
+add_to_bashrc_if_missing 'eval "$(mcfly init bash)"' "mcfly initialization"
 
 echo "All mise tools installed successfully!"
 
