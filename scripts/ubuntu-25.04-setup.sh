@@ -294,17 +294,33 @@ mise_tools=(
 mise use -g "${mise_tools[@]}"
 
 # Configure shell environment
+# Mise activation (tool manager)
 add_to_bashrc_if_missing 'eval "$(mise activate bash)"' "mise activation"
-add_to_bashrc_if_missing "alias ls='lsd -l --group-dirs=first --color=always'" "lsd alias"
+
+# Prompt and shell enhancements
+add_to_bashrc_if_missing 'eval "$(starship init bash)"' "starship initialization"
+
+# Directory navigation (zoxide)
 add_to_bashrc_if_missing 'eval "$(zoxide init bash)"' "zoxide initialization"
 add_to_bashrc_if_missing "alias cd=\"z\"" "zoxide cd alias"
 add_to_bashrc_if_missing "alias cdi=\"zi\"" "zoxide interactive alias"
-add_to_bashrc_if_missing "alias zj=\"zellij attach --create main\"" "zellij attach alias"
-add_to_bashrc_if_missing "alias zr=\"zellij kill-all-sessions && zellij delete-all-sessions\"" "zellij reset alias"
-add_to_bashrc_if_missing 'eval "$(starship init bash)"' "starship initialization"
 
 # Create configuration directory for zoxide
 mkdir -p ~/.config/zoxide
+
+# File and directory listing
+add_to_bashrc_if_missing "alias ls='lsd -l --group-dirs=first --color=always'" "lsd alias"
+
+# File viewing (bat)
+add_to_bashrc_if_missing "alias cat='bat'" "bat cat alias"
+add_to_bashrc_if_missing "alias less='bat'" "bat less alias"
+
+# Terminal multiplexer (zellij)
+add_to_bashrc_if_missing "alias zj=\"zellij attach --create main\"" "zellij attach alias"
+add_to_bashrc_if_missing "alias zr=\"zellij kill-all-sessions && zellij delete-all-sessions\"" "zellij reset alias"
+
+# Git client
+add_to_bashrc_if_missing "alias lg=\"lazygit\"" "lazygit alias"
 
 echo "All mise tools installed successfully!"
 
