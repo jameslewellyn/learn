@@ -44,6 +44,8 @@ configure_gui_tools() {
     mkdir -p ~/.config/alacritty
     
     # Install Alacritty desktop file
+    # Create a symlink to the alacritty binary for desktop file (mise shims)
+    ln -s /home/user/.local/share/mise/shims/alacritty ~/.local/bin/alacritty
     SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
     install_desktop_file \
         "alacritty.desktop" \
