@@ -213,7 +213,7 @@ add_to_bashrc_if_missing "alias less='bat'" "bat less alias"
 
 # Terminal multiplexer (zellij)
 add_to_bashrc_if_missing "alias zj=\"zellij attach --create main\"" "zellij attach alias"
-add_to_bashrc_if_missing "alias zr=\"zellij kill-all-sessions && zellij delete-all-sessions\"" "zellij reset alias"
+add_to_bashrc_if_missing "alias zr=\"zellij kill-all-sessions; zellij delete-all-sessions\"" "zellij reset alias"
 
 # Git client
 add_to_bashrc_if_missing "alias lg=\"lazygit\"" "lazygit alias"
