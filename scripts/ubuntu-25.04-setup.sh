@@ -14,6 +14,7 @@ set -euo pipefail
 
 # Parse command line arguments
 SETUP_CONTAINERS=false
+SETUP_GUI_TOOLS=false
 
 while [[ $# -gt 0 ]]; do
     case $1 in
@@ -21,10 +22,15 @@ while [[ $# -gt 0 ]]; do
             SETUP_CONTAINERS=true
             shift
             ;;
+        --gui-tools)
+            SETUP_GUI_TOOLS=true
+            shift
+            ;;
         -h|--help)
             echo "Usage: $0 [OPTIONS]"
             echo "Options:"
             echo "  --containers    Install and configure Docker and Podman"
+            echo "  --gui-tools     Install and configure GUI tools (Alacritty)"
             echo "  -h, --help      Show this help message"
             exit 0
             ;;
@@ -47,6 +53,11 @@ source "$SCRIPT_DIR/lib/helpers.sh"
 # Source container setup functions if container setup is requested
 if [ "$SETUP_CONTAINERS" = true ]; then
     source "$SCRIPT_DIR/lib/container-setup.sh"
+fi
+
+# Source GUI tools setup functions if GUI tools setup is requested
+if [ "$SETUP_GUI_TOOLS" = true ]; then
+    source "$SCRIPT_DIR/lib/gui-tools-setup.sh"
 fi
 
 # =============================================================================
@@ -131,7 +142,6 @@ mise_tools=(
     bat                  # cat clone with syntax highlighting
     bat-extras           # extra tools for bat (e.g. batdiff, batgrep)
     bottom               # graphical process/system monitor
-    cargo:alacritty      # GPU-accelerated terminal emulator
     cargo:bacon          # Rust code watcher/auto-tester
     cargo:bandwhich      # display current network utilization by process
     cargo:broot          # interactive directory/file navigator
@@ -205,6 +215,11 @@ echo "All mise tools installed successfully!"
 # Setup containers if requested
 if [ "$SETUP_CONTAINERS" = true ]; then
     setup_containers
+fi
+
+# Setup GUI tools if requested
+if [ "$SETUP_GUI_TOOLS" = true ]; then
+    setup_gui_tools
 fi
 
 echo
