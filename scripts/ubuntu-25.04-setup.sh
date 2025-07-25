@@ -231,5 +231,9 @@ if [ "$SETUP_GUI_TOOLS" = true ]; then
     setup_gui_tools
 fi
 
+# Configure dock behavior to minimize windows when clicking on open app icons
+echo "Configuring dock to minimize windows when clicking on open applications..."
+gsettings set org.gnome.shell.extensions.dash-to-dock click-action 'minimize'
+
 echo
 echo "Setup completed successfully!"
